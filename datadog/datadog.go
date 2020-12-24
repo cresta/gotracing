@@ -26,7 +26,7 @@ import (
 const ddApmFile = "/var/run/datadog/apm.socket"
 const ddStatsFile = "/var/run/datadog/dsd.socket"
 
-var _ tracing.Constructor = NewTracer
+var _ gotracing.Constructor = NewTracer
 
 type config struct {
 	ApmFile   string `json:"DD_APM_RECEIVER_SOCKET"`
@@ -63,7 +63,7 @@ func envToStruct(env []string, into interface{}) error {
 	return json.Unmarshal(b, into)
 }
 
-func NewTracer(originalConfig tracing.Config) (tracing.Tracing, error) {
+func NewTracer(originalConfig gotracing.Config) (gotracing.Tracing, error) {
 	var cfg config
 	if err := envToStruct(originalConfig.Env, &cfg); err != nil {
 		return nil, fmt.Errorf("unable to convert env to config: %w", err)
@@ -88,12 +88,12 @@ func NewTracer(originalConfig tracing.Config) (tracing.Tracing, error) {
 	return &Tracing{}, nil
 }
 
-var _ tracing.Tracing = &Tracing{}
+var _ gotracing.Tracing = &Tracing{}
 
 type Tracing struct {
 }
 
-func (t *Tracing) StartSpanFromContext(ctx context.Context, cfg tracing.SpanConfig, callback func(ctx context.Context) error) (retErr error) {
+func (t *Tracing) StartSpanFromContext(ctx context.Context, cfg gotracing.SpanConfig, callback func(ctx context.Context) error) (retErr error) {
 	span, ctx := tracer.StartSpanFromContext(ctx, cfg.OperationName)
 	defer func() {
 		var opts []tracer.FinishOption
