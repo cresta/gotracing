@@ -69,8 +69,7 @@ func NewTracer(originalConfig gotracing.Config) (gotracing.Tracing, error) {
 		return nil, fmt.Errorf("unable to convert env to config: %w", err)
 	}
 	if !fileExists(cfg.apmFile()) {
-		originalConfig.Log.Info(context.Background(), "Unable to find datadog APM file", zap.String("file_name", cfg.apmFile()))
-		return nil, nil
+		return nil, fmt.Errorf("unable to find datadog APM file %s", cfg.apmFile())
 	}
 	u := &unixRoundTripper{
 		file:        cfg.apmFile(),
