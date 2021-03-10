@@ -84,12 +84,15 @@ func NewTracer(originalConfig gotracing.Config) (gotracing.Tracing, error) {
 	}
 	tracer.Start(startOptions...)
 	originalConfig.Log.Info(context.Background(), "DataDog tracing enabled")
-	return &Tracing{}, nil
+	return &Tracing{
+		serviceName: originalConfig.ServiceName,
+	}, nil
 }
 
 var _ gotracing.Tracing = &Tracing{}
 
 type Tracing struct {
+	serviceName string
 }
 
 func (t *Tracing) StartSpanFromContext(ctx context.Context, cfg gotracing.SpanConfig, callback func(ctx context.Context) error) (retErr error) {
@@ -128,7 +131,11 @@ func (t *Tracing) DynamicFields() []zapctx.DynamicFields {
 }
 
 func (t *Tracing) CreateRootMux() (*mux.Router, http.Handler) {
-	ret := ddtrace2.NewRouter(ddtrace2.WithServiceName("gitdb"))
+	var opts []ddtrace2.RouterOption
+	if t.serviceName != "" {
+		opts = append(opts, ddtrace2.WithServiceName(t.serviceName))
+	}
+	ret := ddtrace2.NewRouter(opts...)
 	return ret.Router, ret
 }
 
