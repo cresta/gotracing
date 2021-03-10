@@ -44,6 +44,7 @@ func (r *Registry) New(name string, config Config) (Tracing, error) {
 }
 
 type Config struct {
+	ServiceName string
 	Log *zapctx.Logger
 	Env []string
 }
@@ -52,7 +53,7 @@ var _ Tracing = Noop{}
 
 type Noop struct{}
 
-func (n Noop) StartSpanFromContext(ctx context.Context, cfg SpanConfig, callback func(ctx context.Context) error) error {
+func (n Noop) StartSpanFromContext(ctx context.Context, _ SpanConfig, callback func(ctx context.Context) error) error {
 	return callback(ctx)
 }
 
@@ -72,6 +73,7 @@ func (n Noop) CreateRootMux() (*mux.Router, http.Handler) {
 	return ret, ret
 }
 
+// MuxTagging adds key/value tags to the context for a handler based upon the mux Vars
 func MuxTagging(t Tracing) func(handler http.Handler) http.Handler {
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
