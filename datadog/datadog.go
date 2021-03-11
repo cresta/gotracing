@@ -4,15 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net"
+	"github.com/cresta/gotracing"
+	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 	"strings"
-	"sync"
-	"time"
-
-	"github.com/cresta/gotracing"
-	"github.com/gorilla/mux"
 
 	"github.com/cresta/zapctx"
 
@@ -71,13 +67,9 @@ func NewTracer(originalConfig gotracing.Config) (gotracing.Tracing, error) {
 	if !fileExists(cfg.apmFile()) {
 		return nil, fmt.Errorf("unable to find datadog APM file %s", cfg.apmFile())
 	}
-	u := &unixRoundTripper{
-		file:        cfg.apmFile(),
-		dialTimeout: 100 * time.Millisecond,
-	}
 
 	startOptions := []tracer.StartOption{
-		tracer.WithRuntimeMetrics(), tracer.WithHTTPRoundTripper(u), tracer.WithLogger(ddZappedLogger{originalConfig.Log}),
+		tracer.WithRuntimeMetrics(), tracer.WithLogger(ddZappedLogger{originalConfig.Log}), tracer.WithUDS(cfg.apmFile()),
 	}
 	if fileExists(cfg.statsFile()) {
 		startOptions = append(startOptions, tracer.WithDogstatsdAddress("unix://"+cfg.statsFile()))
@@ -161,31 +153,3 @@ type ddZappedLogger struct {
 func (d ddZappedLogger) Log(msg string) {
 	d.Logger.Info(context.Background(), msg)
 }
-
-type unixRoundTripper struct {
-	file        string
-	dialTimeout time.Duration
-	transport   http.Transport
-	once        sync.Once
-}
-
-func (u *unixRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	u.once.Do(u.setup)
-	u.transport.DialContext = u.dialContext
-	u.transport.DisableCompression = true
-	return u.transport.RoundTrip(req)
-}
-
-func (u *unixRoundTripper) setup() {
-	u.transport.DialContext = u.dialContext
-	u.transport.DisableCompression = true
-}
-
-func (u *unixRoundTripper) dialContext(ctx context.Context, _ string, _ string) (conn net.Conn, err error) {
-	d := net.Dialer{
-		Timeout: u.dialTimeout,
-	}
-	return d.DialContext(ctx, "unix", u.file)
-}
-
-var _ http.RoundTripper = &unixRoundTripper{}
