@@ -7,6 +7,7 @@ import (
 
 	"github.com/cresta/zapctx"
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
 )
 
 type SpanConfig struct {
@@ -18,6 +19,8 @@ type Tracing interface {
 	AttachTag(ctx context.Context, key string, value interface{})
 	DynamicFields() []zapctx.DynamicFields
 	CreateRootMux() (*mux.Router, http.Handler)
+	GrpcServerOptions(serviceName string) []grpc.ServerOption
+	GrpcDialOptions(serviceName string) []grpc.DialOption
 	StartSpanFromContext(ctx context.Context, cfg SpanConfig, callback func(ctx context.Context) error) error
 }
 
@@ -45,13 +48,21 @@ func (r *Registry) New(name string, config Config) (Tracing, error) {
 
 type Config struct {
 	ServiceName string
-	Log *zapctx.Logger
-	Env []string
+	Log         *zapctx.Logger
+	Env         []string
 }
 
 var _ Tracing = Noop{}
 
 type Noop struct{}
+
+func (n Noop) GrpcDialOptions(_ string) []grpc.DialOption {
+	return nil
+}
+
+func (n Noop) GrpcServerOptions(_ string) []grpc.ServerOption {
+	return nil
+}
 
 func (n Noop) StartSpanFromContext(ctx context.Context, _ SpanConfig, callback func(ctx context.Context) error) error {
 	return callback(ctx)

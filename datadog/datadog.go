@@ -4,15 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cresta/gotracing"
-	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/cresta/gotracing"
+	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
+
 	"github.com/cresta/zapctx"
 
 	"go.uber.org/zap"
+	grpctrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/google.golang.org/grpc"
 	ddtrace2 "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
 	ddhttp "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
@@ -85,6 +88,22 @@ var _ gotracing.Tracing = &Tracing{}
 
 type Tracing struct {
 	serviceName string
+}
+
+func (t *Tracing) GrpcDialOptions(serviceName string) []grpc.DialOption {
+	si := grpctrace.StreamClientInterceptor(grpctrace.WithServiceName(serviceName))
+	ui := grpctrace.UnaryClientInterceptor(grpctrace.WithServiceName(serviceName))
+	return []grpc.DialOption{
+		grpc.WithStreamInterceptor(si), grpc.WithUnaryInterceptor(ui),
+	}
+}
+
+func (t *Tracing) GrpcServerOptions(serviceName string) []grpc.ServerOption {
+	si := grpctrace.StreamServerInterceptor(grpctrace.WithServiceName(serviceName))
+	ui := grpctrace.UnaryServerInterceptor(grpctrace.WithServiceName(serviceName))
+	return []grpc.ServerOption{
+		grpc.StreamInterceptor(si), grpc.UnaryInterceptor(ui),
+	}
 }
 
 func (t *Tracing) StartSpanFromContext(ctx context.Context, cfg gotracing.SpanConfig, callback func(ctx context.Context) error) (retErr error) {
