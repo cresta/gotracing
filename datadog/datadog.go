@@ -90,20 +90,16 @@ type Tracing struct {
 	serviceName string
 }
 
-func (t *Tracing) GrpcDialOptions(serviceName string) []grpc.DialOption {
+func (t *Tracing) GrpcClientInterceptors(serviceName string) ([]grpc.UnaryClientInterceptor, []grpc.StreamClientInterceptor) {
 	si := grpctrace.StreamClientInterceptor(grpctrace.WithServiceName(serviceName))
 	ui := grpctrace.UnaryClientInterceptor(grpctrace.WithServiceName(serviceName))
-	return []grpc.DialOption{
-		grpc.WithStreamInterceptor(si), grpc.WithUnaryInterceptor(ui),
-	}
+	return []grpc.UnaryClientInterceptor{ui}, []grpc.StreamClientInterceptor{si}
 }
 
-func (t *Tracing) GrpcServerOptions(serviceName string) []grpc.ServerOption {
+func (t *Tracing) GrpcServerInterceptors(serviceName string) ([]grpc.UnaryServerInterceptor, []grpc.StreamServerInterceptor) {
 	si := grpctrace.StreamServerInterceptor(grpctrace.WithServiceName(serviceName))
 	ui := grpctrace.UnaryServerInterceptor(grpctrace.WithServiceName(serviceName))
-	return []grpc.ServerOption{
-		grpc.StreamInterceptor(si), grpc.UnaryInterceptor(ui),
-	}
+	return []grpc.UnaryServerInterceptor{ui}, []grpc.StreamServerInterceptor{si}
 }
 
 func (t *Tracing) StartSpanFromContext(ctx context.Context, cfg gotracing.SpanConfig, callback func(ctx context.Context) error) (retErr error) {

@@ -19,8 +19,8 @@ type Tracing interface {
 	AttachTag(ctx context.Context, key string, value interface{})
 	DynamicFields() []zapctx.DynamicFields
 	CreateRootMux() (*mux.Router, http.Handler)
-	GrpcServerOptions(serviceName string) []grpc.ServerOption
-	GrpcDialOptions(serviceName string) []grpc.DialOption
+	GrpcServerInterceptors(serviceName string) ([]grpc.UnaryServerInterceptor, []grpc.StreamServerInterceptor)
+	GrpcClientInterceptors(serviceName string) ([]grpc.UnaryClientInterceptor, []grpc.StreamClientInterceptor)
 	StartSpanFromContext(ctx context.Context, cfg SpanConfig, callback func(ctx context.Context) error) error
 }
 
@@ -56,12 +56,12 @@ var _ Tracing = Noop{}
 
 type Noop struct{}
 
-func (n Noop) GrpcDialOptions(_ string) []grpc.DialOption {
-	return nil
+func (n Noop) GrpcServerInterceptors(_ string) ([]grpc.UnaryServerInterceptor, []grpc.StreamServerInterceptor) {
+	return nil, nil
 }
 
-func (n Noop) GrpcServerOptions(_ string) []grpc.ServerOption {
-	return nil
+func (n Noop) GrpcClientInterceptors(_ string) ([]grpc.UnaryClientInterceptor, []grpc.StreamClientInterceptor) {
+	return nil, nil
 }
 
 func (n Noop) StartSpanFromContext(ctx context.Context, _ SpanConfig, callback func(ctx context.Context) error) error {
