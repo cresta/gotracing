@@ -90,15 +90,15 @@ type Tracing struct {
 	serviceName string
 }
 
-func (t *Tracing) GrpcClientInterceptors(serviceName string) ([]grpc.UnaryClientInterceptor, []grpc.StreamClientInterceptor) {
-	si := grpctrace.StreamClientInterceptor(grpctrace.WithServiceName(serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
-	ui := grpctrace.UnaryClientInterceptor(grpctrace.WithServiceName(serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
+func (t *Tracing) GrpcClientInterceptors() ([]grpc.UnaryClientInterceptor, []grpc.StreamClientInterceptor) {
+	si := grpctrace.StreamClientInterceptor(grpctrace.WithServiceName(t.serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
+	ui := grpctrace.UnaryClientInterceptor(grpctrace.WithServiceName(t.serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
 	return []grpc.UnaryClientInterceptor{ui}, []grpc.StreamClientInterceptor{si}
 }
 
-func (t *Tracing) GrpcServerInterceptors(serviceName string) ([]grpc.UnaryServerInterceptor, []grpc.StreamServerInterceptor) {
-	si := grpctrace.StreamServerInterceptor(grpctrace.WithServiceName(serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
-	ui := grpctrace.UnaryServerInterceptor(grpctrace.WithServiceName(serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
+func (t *Tracing) GrpcServerInterceptors() ([]grpc.UnaryServerInterceptor, []grpc.StreamServerInterceptor) {
+	si := grpctrace.StreamServerInterceptor(grpctrace.WithServiceName(t.serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
+	ui := grpctrace.UnaryServerInterceptor(grpctrace.WithServiceName(t.serviceName), grpctrace.WithIgnoredMethods("/grpc.health.v1.Health/Check"))
 	return []grpc.UnaryServerInterceptor{ui}, []grpc.StreamServerInterceptor{si}
 }
 
