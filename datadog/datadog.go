@@ -137,12 +137,18 @@ func (t *Tracing) DynamicFields() []zapctx.DynamicFields {
 	}
 }
 
-func (t *Tracing) CreateRootMux() (*mux.Router, http.Handler) {
-	var opts []ddtrace2.RouterOption
+func (t *Tracing) CreateRootMux(opts ...interface{}) (*mux.Router, http.Handler) {
+	var routerOpts []ddtrace2.RouterOption
 	if t.serviceName != "" {
-		opts = append(opts, ddtrace2.WithServiceName(t.serviceName))
+		routerOpts = append(routerOpts, ddtrace2.WithServiceName(t.serviceName))
 	}
-	ret := ddtrace2.NewRouter(opts...)
+	for _, opt := range opts {
+		routerOpt, ok := opt.(ddtrace2.RouterOption)
+		if ok {
+			routerOpts = append(routerOpts, routerOpt)
+		}
+	}
+	ret := ddtrace2.NewRouter(routerOpts...)
 	return ret.Router, ret
 }
 

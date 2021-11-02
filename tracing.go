@@ -18,7 +18,7 @@ type Tracing interface {
 	WrapRoundTrip(rt http.RoundTripper) http.RoundTripper
 	AttachTag(ctx context.Context, key string, value interface{})
 	DynamicFields() []zapctx.DynamicFields
-	CreateRootMux() (*mux.Router, http.Handler)
+	CreateRootMux(opts ...interface{}) (*mux.Router, http.Handler)
 	GrpcServerInterceptors(serviceName string) ([]grpc.UnaryServerInterceptor, []grpc.StreamServerInterceptor)
 	GrpcClientInterceptors(serviceName string) ([]grpc.UnaryClientInterceptor, []grpc.StreamClientInterceptor)
 	StartSpanFromContext(ctx context.Context, cfg SpanConfig, callback func(ctx context.Context) error) error
@@ -79,7 +79,7 @@ func (n Noop) DynamicFields() []zapctx.DynamicFields {
 	return nil
 }
 
-func (n Noop) CreateRootMux() (*mux.Router, http.Handler) {
+func (n Noop) CreateRootMux(_ ...interface{}) (*mux.Router, http.Handler) {
 	ret := mux.NewRouter()
 	return ret, ret
 }
