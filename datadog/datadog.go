@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/cresta/gotracing"
 	"github.com/gorilla/mux"
@@ -25,7 +26,12 @@ import (
 const ddApmFile = "/var/run/datadog/apm.socket"
 const ddStatsFile = "/var/run/datadog/dsd.socket"
 
-var _ gotracing.Constructor = NewTracer
+var (
+	_ gotracing.Constructor = NewTracer
+	// Check every 5 seconds
+	fileExistsCheckInterval = time.Second * 5
+	fileExistsMaxAttempt    = 5
+)
 
 type config struct {
 	ApmFile   string `json:"DD_APM_RECEIVER_SOCKET"`
@@ -154,11 +160,14 @@ func (t *Tracing) WrapRoundTrip(rt http.RoundTripper) http.RoundTripper {
 }
 
 func fileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
+	for attempt := 0; attempt < fileExistsMaxAttempt; attempt++ {
+		info, err := os.Stat(filename)
+		if !os.IsNotExist(err) {
+			return !info.IsDir()
+		}
+		time.Sleep(fileExistsCheckInterval)
 	}
-	return !info.IsDir()
+	return false
 }
 
 type ddZappedLogger struct {
