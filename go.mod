@@ -1,6 +1,6 @@
 module github.com/cresta/gotracing
 
-go 1.15
+go 1.19
 
 require (
 	github.com/cresta/magehelper v0.0.56
