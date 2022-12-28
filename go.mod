@@ -3,7 +3,7 @@ module github.com/cresta/gotracing
 go 1.15
 
 require (
-	github.com/cresta/magehelper v0.0.56
+	github.com/cresta/magehelper v0.0.68
 	github.com/cresta/zapctx v0.0.1
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.2.0 // indirect
