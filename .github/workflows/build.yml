@@ -1,32 +1,19 @@
 name: BuildTest
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  test:
-    name: Test
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Install Go
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: go.mod
-          cache-dependency-path: go.sum
-          cache: true
-      - name: Setup CI
-        run: make setup_ci && git stash
-      - name: Build
-        run: go build -mod=readonly ./...
-      - name: Verify
-        run: go mod verify
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
       - name: Test code
-        uses: magefile/mage-action@v2
-        with:
-          version: latest
-          args: go:test
+        uses: cresta/action-lint-go-external@v1
