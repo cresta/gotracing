@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/cresta/zapctx v0.0.1
 	github.com/gorilla/mux v1.8.0
-	github.com/stretchr/testify v1.7.0
-	go.uber.org/zap v1.16.0
+	github.com/stretchr/testify v1.8.0
+	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.41.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.29.0
 )
@@ -21,7 +21,6 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/philhofer/fwd v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/tinylib/msgp v1.1.5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
@@ -33,6 +32,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gopkg.in/yaml.v2 v2.3.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
