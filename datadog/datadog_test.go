@@ -1,7 +1,6 @@
 package datadog
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -16,8 +15,10 @@ var (
 
 func generateTestFileName(t *testing.T) string {
 	for {
-		file, err := ioutil.TempFile(tmpDir, "datadog-file-exists")
-		defer os.Remove(file.Name())
+		file, err := os.CreateTemp(tmpDir, "datadog-file-exists")
+		defer func() {
+			require.NoError(t, os.Remove(file.Name()))
+		}()
 		assert.NoError(t, err)
 		return file.Name()
 	}
