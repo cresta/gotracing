@@ -4,7 +4,6 @@ run:
 linters:
   disable-all: true
   enable:
-    - deadcode
     - depguard
     - dupl
     - errcheck
@@ -14,23 +13,17 @@ linters:
     - gocyclo
     - gofmt
     - goimports
-    - golint
     - gosec
     - gosimple
     - govet
     - ineffassign
-    - interfacer
-    - maligned
     - megacheck
     - misspell
     - nakedret
     - prealloc
-    - scopelint
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
