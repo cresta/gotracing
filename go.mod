@@ -1,6 +1,6 @@
 module github.com/cresta/gotracing
 
-go 1.19
+go 1.20
 
 require (
 	github.com/cresta/zapctx v0.0.3
