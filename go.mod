@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cresta/zapctx v0.0.3
 	github.com/gorilla/mux v1.8.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.3
 	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.55.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.29.0
