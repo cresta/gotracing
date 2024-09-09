@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
-	google.golang.org/grpc v1.66.0
+	google.golang.org/grpc v1.66.1
 	gopkg.in/DataDog/dd-trace-go.v1 v1.67.1
 )
 
