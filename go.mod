@@ -1,6 +1,6 @@
 module github.com/cresta/gotracing
 
-go 1.21
+go 1.22.0
 
 toolchain go1.23.1
 
@@ -10,7 +10,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.66.2
-	gopkg.in/DataDog/dd-trace-go.v1 v1.67.1
+	gopkg.in/DataDog/dd-trace-go.v1 v1.68.0
 )
 
 require (
