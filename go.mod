@@ -7,7 +7,7 @@ toolchain go1.23.1
 require (
 	github.com/cresta/zapctx v0.0.3
 	github.com/gorilla/mux v1.8.1
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.66.2
 	gopkg.in/DataDog/dd-trace-go.v1 v1.67.1
