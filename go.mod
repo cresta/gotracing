@@ -2,7 +2,7 @@ module github.com/cresta/gotracing
 
 go 1.21
 
-toolchain go1.23.1
+toolchain go1.23.3
 
 require (
 	github.com/cresta/zapctx v0.0.3
